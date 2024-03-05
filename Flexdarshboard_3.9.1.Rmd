@@ -1,0 +1,212 @@
+---
+title: "EJERCICIOS 3.9.1"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: column
+    vertical_layout: fill
+    theme: cosmo
+    social: [ "GitHub", "menu"]
+---
+
+```{r setup, include=FALSE}
+library(pacman)
+p_load(ggplot2, dplyr, datos, maps, tictoc, 
+       mapproj, plotly, flextable, gridExtra,
+       tidyverse, dplyr, flexdashboard, gganimate,
+       plotly, formattable, DT)
+
+millas <- datos::millas
+```  
+
+# Pregunta 1\
+
+## Convierte un gráfico de barras apiladas en un gráfico circular usando `coord_polar()`\
+
+### Convierte un gráfico de barras apiladas en un gráfico circular usando `coord_polar()`\
+
+
+```{r grafico de barras, out.width='80%', out.height='80%'}
+millas %>%  filter(traccion == "4" & anio == 2008 & combustible == "p") %>% ggplot() + 
+  aes(x = fabricante, fill = clase) + geom_bar()
+```  
+  
+Para este gráfico de barras apiladas queremos observar cuantos autos fueron fabricados en\
+dos mil ocho y de tracción en las 4 ruedas, teniendo en cuenta el fabricante y la clase.
+
+##  
+
+### Gráfico en Proyeccion polar "x"\
+
+```{r Ojo de Buey}
+millas %>%  filter(traccion == "4" & anio == 2008 & combustible == "p") %>% 
+  ggplot() + 
+  aes(x = fabricante, fill = clase) + 
+  geom_bar(show.legend = F) +
+  coord_polar()
+```  
+  
+  Por defecto el argumento `theta = "x"` y nos da un gráfico que se conoce como **"Ojo de Buey"**.\
+Cuando el argumento es `theta = "x"`, los valores del eje **x** se mapean a los ángulos en la\
+proyección polar, lo que hace que las barras (o marcadores) se extiendan radialmente según los\
+valores del eje **x**.
+
+##  
+
+### Gráfico en proyección polar "y"\
+
+```{r proyeccion polar y, out.width='90%', out.height='90%'}
+millas %>%  filter(traccion == "4" & anio == 2008 & combustible == "p") %>% 
+  ggplot() + 
+  aes(x = fabricante, fill = clase) + 
+  geom_bar(show.legend = F) +
+  coord_polar(theta = "y")
+```  
+  
+  Cuando el argumento es `theta = "y"`, los valores del eje **y** se mapean a los ángulos en la proyección polar,\
+lo que significa que la longitud de las barras (la distancia radial) se determina por los valores del eje **y**.\
+
+
+# Pregunta 2  
+
+## 
+
+---
+  
+###  
+
+  La función **`labs()`** en el paquete ggplot2 se utiliza para establecer etiquetas y leyendas en un gráfico. Permite personalizar y añadir títulos a los ejes x e y, la leyenda de colores, el título del gráfico y la leyenda general del gráfico. Es una forma conveniente de agregar metadatos descriptivos a un gráfico creado con ggplot2.
+
+---
+  
+  ###    
+  
+```{r barras, fig.width=6, fig.height=4}
+library(ggplot2)
+library(dplyr)
+
+millas %>%  
+  filter(traccion == "4" & anio == 2008 & combustible == "p") %>% 
+  ggplot() + 
+  aes(x = fabricante, fill = clase) + 
+  geom_bar()
+```
+
+
+##  
+
+###  
+
+```{r}
+millas %>%  filter(traccion == "4" & anio == 2008 & combustible == "p") %>% ggplot() + 
+  aes(x = fabricante, fill = clase) + geom_bar() +
+  labs(title = "Distribución de clase de automóviles 
+       por fabricante en 2008",                            # Le agregamos un título adecuado
+       x = "Fabricante del auto",                          # Cambiamos el nombre del eje `x`
+       y = "Número de autos",                              # Cambiamos el nombre del eje `y`
+       fill = "Tipo de auto",                              # Cambiamos el nombre de la leyenda
+       subtitle = "Estos autos solo tienen tracción en las 
+       cuatro ruedas y combustible premium",               # le agremos un subtítulo
+       caption = "fuente: http://fueleconomy.gov")         # le agregamos la fuente de donde se han proporcionado los datos
+```  
+  
+# Pregunta 3  
+
+## column {.tabset}  
+
+### Mapa del mundo 
+
+`Coord_map` y `coord_quickmap` son dos funciones que permiten proyectar mapas en entornos de\
+visualización en R, aunque difieren significativamente en términos de precisión y velocidad de cálculo.  
+
+```{r Mapa del mundo}
+mundo <- ggplot(map_data("world"),
+       aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", color = 1) +
+  labs(title = "Mapa del Mundo",
+       x = "Longitud",
+       y = "Latitud")
+mundo
+```
+
+---
+
+### Función `Coord_map`  
+**`coord_map`** ofrece una proyección precisa del mapa, aunque requiere un tiempo\
+de computación considerable. Su objetivo es aproximar la proyección lo máximo posible\
+para obtener representaciones cartográficas fieles a la realidad, siendo útil para áreas extensas o\
+cuando se necesita alta precisión espacial.  
+
+```{r}
+mundo + coord_map(xlim = c(-180, 180))
+```  
+
+---
+
+### Función `Coord_quickmap`  
+
+**`Coord_quickmap`** ofrece una aproximación rápida para preservar líneas rectas en la visualización\
+del mapa, a diferencia de coord_map. Aunque menos precisa, coord_quickmap destaca por su velocidad\
+y eficiencia computacional, siendo útil para representar áreas pequeñas cercanas al ecuador donde la\
+preservación de líneas rectas es prioritaria sobre la precisión cartográfica.  
+
+```{r}
+mundo + coord_quickmap()
+```  
+
+### sin coord_quickmap  
+```{r}
+italia <- map_data("italy") %>% ggplot() + aes(x = long, y = lat, group = group) +
+  geom_polygon(fill = "white", color = "black")
+italia
+```
+
+### con coord_quickmap  
+```{r italia}
+ italia_mej <- italia + coord_quickmap(expand = TRUE) # Si es FALSO, los límites se toman exactamente de los datos o de xlim/ylim.
+italia_mej
+```  
+
+
+##  column {.tabset}  
+
+### Proyección Van der grinten
+```{r vandergrinten}
+mundo + coord_map(projection = "vandergrinten",
+                  xlim = c(-180, 180))
+```  
+  
+### Proyección Ortográfica
+```{r orthographic}
+mundo + coord_map(projection = "orthographic")
+```  
+  
+###  Proyección Ojo de pez  
+```{r fisheye}
+mundo + coord_map(projection = "fisheye",
+                  n = 4)   # Índice de refracción
+```  
+
+  
+### Proyección Sinusoidal  
+```{r sinusoidal}
+mundo + coord_map(projection = "sinusoidal",
+                  xlim = c(-180, 180))
+```  
+  
+### Proyección Cilíndrica  
+```{r cylindrical}
+mundo + coord_map(projection = "cylindrical",
+                  xlim = c(-180, 180))
+```  
+  
+### Proyección Gall-Peters  
+```{r gall-peters}
+mundo + coord_map(projection = "gall",
+                  parameters = 45,
+                  xlim = c(-180, 180))
+```  
+
+
+
+
+

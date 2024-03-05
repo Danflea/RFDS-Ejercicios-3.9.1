@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+  
+# Dashboard con Pestañas
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'columna1fila1')">Columna 1 - Fila 1</button>
+  <button class="tablinks" onclick="openTab(event, 'columna1fila2')">Columna 1 - Fila 2</button>
+  <button class="tablinks" onclick="openTab(event, 'columna2fila1')">Columna 2 - Fila 1</button>
+  <button class="tablinks" onclick="openTab(event, 'columna2fila2')">Columna 2 - Fila 2</button>
+</div>
+
+<div id="columna1fila1" class="tabcontent">
+  <h3>Pestaña 1 - Columna 1, Fila 1</h3>
+  <p>Contenido de la pestaña 1 - Columna 1, Fila 1.</p>
+</div>
+
+<div id="columna1fila2" class="tabcontent">
+  <h3>Pestaña 1 - Columna 1, Fila 2</h3>
+  <p>Contenido de la pestaña 1 - Columna 1, Fila 2.</p>
+</div>
+
+<div id="columna2fila1" class="tabcontent">
+  <h3>Pestaña 1 - Columna 2, Fila 1</h3>
+  <p>Contenido de la pestaña 1 - Columna 2, Fila 1.</p>
+</div>
+
+<div id="columna2fila2" class="tabcontent">
+  <h3>Pestaña 1 - Columna 2, Fila 2</h3>
+  <p>Contenido de la pestaña 1 - Columna 2, Fila 2.</p>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
+  
+
+
